@@ -30,7 +30,7 @@ if (isset($_POST['Enter'])) {
     $array = mysqli_fetch_array($res);
     if ($_POST['login'] == $array['login'] && md5($_POST['password']) == $array['pass']) {
         header("Location:todo.php?login=" . $array['login']);
-        setcookie('login',$_POST['login'],time()+3600*3600,"/");
+        setcookie('login', $_POST['login'], time() + 3600 * 3600, "/");
     } else {
         echo 'Вы не смогли авторизоваться!';
         echo "<meta charset='UTF-8'>
@@ -50,8 +50,38 @@ if (isset($_POST['Enter'])) {
         $res3 = mysqli_query($db, $queryreg);
         header("Location:todo.php?login=" . $_POST['login']);
 
+
+        $queryAddWorkDB = "
+                CREATE TABLE `" . $_POST['login'] . 'Work' . "` (
+                        `user` text NOT NULL
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+        $queryInsertWorkDB = "INSERT INTO `" . $_POST['login'] . 'Work' . "` (`user`) VALUES
+                        ('" . $_POST['login'] . "');";
+
+        $queryAddDB = "
+          
+                CREATE TABLE `" . $_POST['login'] . "` (
+                  `id` int(11) NOT NULL,
+                  `description` text NOT NULL,
+                  `is_done` tinyint(4) NOT NULL DEFAULT '0',
+                  `date_added` datetime NOT NULL
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8; ";
+
+        $queryPrimary = "  ALTER TABLE `" . $_POST['login'] . "`
+                  ADD PRIMARY KEY (`id`);";
+
+
+        $queryAI = "  ALTER TABLE `" . $_POST['login'] . "`
+                  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;";
+
+
+        mysqli_query($db, $queryAddWorkDB);
+        mysqli_query($db, $queryInsertWorkDB);
+        mysqli_query($db, $queryAddDB);
+        mysqli_query($db, $queryPrimary);
+        mysqli_query($db, $queryAI);
     }
-    setcookie('login',$_POST['login'],time()+3600*3600,"/");
+    setcookie('login', $_POST['login'], time() + 3600 * 3600, "/");
 
 }
 
